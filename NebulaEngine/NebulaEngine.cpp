@@ -4,9 +4,12 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
+#include "libs.h"
+#include "mesh.h"
+#include "helpers.h"
 
 using namespace std;
 
@@ -72,6 +75,17 @@ int main()
     glViewport(0, 0, bufferWidth, bufferHeight);
 
 
+
+    
+
+    // Create cube mesh
+    Mesh cube = createCube();
+
+
+
+
+
+
     // Loop until window is closed
     while (!glfwWindowShouldClose(mainWindow))
     {
@@ -81,6 +95,16 @@ int main()
         // Clear Window (color data)
         glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+
+         
+
+
+        // Draw cube mesh
+        cube.Draw();
+
+
+
 
         // Swap between the 2 buffers
         glfwSwapBuffers(mainWindow);
