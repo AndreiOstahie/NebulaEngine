@@ -1,4 +1,9 @@
 #include "mesh.h"
+#include <iostream>
+
+Mesh::Mesh()
+{
+}
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Material material)
 {
@@ -12,6 +17,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 void Mesh::Draw()
 {
+    std::cout << "Drawing mesh..." << std::endl;
+
     // Bind textures
     for (unsigned int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // Activate texture unit
@@ -23,12 +30,20 @@ void Mesh::Draw()
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
+    // Unbind textures
+    for (unsigned int i = 0; i < textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
     // Reset to default texture unit
     glActiveTexture(GL_TEXTURE0);
 }
 
 void Mesh::Setup()
 {
+    std::cout << "Setup mesh..." << std::endl;
+
     // Create buffers/arrays
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

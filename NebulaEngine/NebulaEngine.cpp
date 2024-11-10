@@ -1,15 +1,16 @@
 // NebulaEngine.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-
+#pragma once
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
 
-
 #include "libs.h"
-#include "mesh.h"
+#include "testlevel.h"
 #include "helpers.h"
+
+
 
 using namespace std;
 
@@ -19,10 +20,17 @@ const GLint WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 
 
 
+
+
+
+
+
+
 int main()
 {
     std::cout << "Hello World!\n";
 
+    bool enableGrid = true;
 
 
     // Init GLFW and return error for failure
@@ -75,40 +83,52 @@ int main()
     glViewport(0, 0, bufferWidth, bufferHeight);
 
 
+    // Create a level
+    Level* level = new TestLevel();
+    level->Start();
 
+    // Engine frame time
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
     
-
-    // Create cube mesh
-    Mesh cube = createCube();
-
-
-
-
-
 
     // Loop until window is closed
     while (!glfwWindowShouldClose(mainWindow))
     {
+        // Get frame deltaTime
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         // Handle user input events
         glfwPollEvents();
 
-        // Clear Window (color data)
+        // Clear Window (color data and depth data)
         glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+        // Handle user input
+        level->HandleInput(mainWindow);
          
+        // Update the current level
+        level->Update(deltaTime);
 
-
-        // Draw cube mesh
-        cube.Draw();
-
-
-
+        if (enableGrid)
+        {
+            // Draw the grid
+            glm::vec3 gridColor(0.6f, 0.6f, 0.6f); // Light gray color
+            drawGrid(20, 1.0f, gridColor);         // Grid size 20x20 with 1 unit spacing
+        }
 
         // Swap between the 2 buffers
         glfwSwapBuffers(mainWindow);
     }
+
+    // Cleanup
+    delete level;
+    level = nullptr;
+    glfwDestroyWindow(mainWindow);
+    glfwTerminate();
 
 
     return 0;

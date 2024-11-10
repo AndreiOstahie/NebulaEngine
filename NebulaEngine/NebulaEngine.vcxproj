@@ -139,14 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="helpers.cpp" />
+    <ClCompile Include="level.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="NebulaEngine.cpp" />
+    <ClCompile Include="testlevel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="structs.h" />
+    <ClInclude Include="testlevel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
