@@ -14,7 +14,7 @@ void Level::Update(float deltaTime) {
 }
 
 // Handle keyboard input
-void Level::HandleInput(GLFWwindow* window) {
+void Level::HandleInput(GLFWwindow* window, float deltaTime) {
     std::cout << "Handle Input" << std::endl;
 }
 

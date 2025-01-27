@@ -14,7 +14,7 @@ public:
     virtual void Update(float deltaTime);
 
     // Handle keyboard input
-    virtual void HandleInput(GLFWwindow* window);
+    virtual void HandleInput(GLFWwindow* window, float deltaTime);
 
     // Handle mouse input
     virtual void HandleMouseInput(GLFWwindow* window, double xpos, double ypos);

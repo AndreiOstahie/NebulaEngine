@@ -5,6 +5,19 @@ Mesh::Mesh()
 {
 }
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
+{
+    this->vertices = vertices;
+    this->indices = indices;
+
+    // Set default shader if no other shader is provided
+    Shader* shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+    this->shader = shader;
+
+    // Perform mesh setup
+    Setup();
+}
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Material material)
 {
     this->vertices = vertices;
@@ -12,12 +25,27 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->textures = textures;
     this->material = material;
 
+    // Set default shader if no other shader is provided
+    Shader* shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+    this->shader = shader;
+
+    // Perform mesh setup
+    Setup();
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Shader *shader)
+{
+    this->vertices = vertices;
+    this->indices = indices;
+    this->shader = shader;
+
+    // Perform mesh setup
     Setup();
 }
 
 void Mesh::Draw()
 {
-    std::cout << "Drawing mesh..." << std::endl;
+    // std::cout << "Drawing mesh..." << std::endl;
 
     // Bind textures
     for (unsigned int i = 0; i < textures.size(); i++) {
@@ -38,6 +66,22 @@ void Mesh::Draw()
 
     // Reset to default texture unit
     glActiveTexture(GL_TEXTURE0);
+}
+
+void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection)
+{
+    // Render
+    glUseProgram(shader->ID);
+
+
+    // Set uniforms
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Model"), 1, GL_FALSE, glm::value_ptr(Model));
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "View"), 1, GL_FALSE, glm::value_ptr(View));
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 void Mesh::Setup()
@@ -72,5 +116,11 @@ void Mesh::Setup()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureCoords));
 
     glBindVertexArray(0);
+}
+
+void Mesh::SetShader(Shader* shader)
+{
+    this->shader = shader;
+    Setup();
 }
 
