@@ -7,8 +7,6 @@
 class TestLevel : public Level {
 private:
     Mesh* cube = nullptr;
-    Camera* camera = nullptr;
-
     Shader* defaultShader;
 
 public:

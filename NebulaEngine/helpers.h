@@ -3,5 +3,8 @@
 
 
 Mesh* createCube();
+Mesh* createCubeWithShader();
 
-void drawGrid(int gridSize, float spacing, const glm::vec3& color);
+
+
+void DrawGrid(float size, float step, Shader* shader);

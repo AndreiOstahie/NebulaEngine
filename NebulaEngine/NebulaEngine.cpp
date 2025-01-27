@@ -108,21 +108,15 @@ int main()
         glfwPollEvents();
 
         // Clear Window (color data and depth data)
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Handle user input
         level->HandleInput(mainWindow, deltaTime);
+
          
         // Update the current level
         level->Update(deltaTime);
-
-        //if (enableGrid)
-        //{
-        //    // Draw the grid
-        //    glm::vec3 gridColor(0.6f, 0.6f, 0.6f); // Light gray color
-        //    drawGrid(20, 1.0f, gridColor);         // Grid size 20x20 with 1 unit spacing
-        //}
 
         // Swap between the 2 buffers
         glfwSwapBuffers(mainWindow);

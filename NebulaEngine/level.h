@@ -2,9 +2,19 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "camera.h"
+#include "shader.h"
 
 class Level {
 public:
+    // Variables
+    Camera* camera;
+    bool displayGrid = true;
+    Shader* gridShader;
+
+
+    // Methods
+    Level();
     virtual ~Level();
 
     // Called once when the level/scene is initialized
@@ -18,4 +28,6 @@ public:
 
     // Handle mouse input
     virtual void HandleMouseInput(GLFWwindow* window, double xpos, double ypos);
+
+    
 };
