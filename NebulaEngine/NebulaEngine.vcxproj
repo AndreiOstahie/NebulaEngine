@@ -156,6 +156,7 @@
     <ClInclude Include="shader.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="testlevel.h" />
+    <ClInclude Include="transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentShader.glsl" />

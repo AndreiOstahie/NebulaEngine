@@ -10,6 +10,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
     this->vertices = vertices;
     this->indices = indices;
 
+    modelMatrix = glm::mat4(1);
+
     // Set default shader if no other shader is provided
     Shader* shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
     this->shader = shader;
@@ -25,6 +27,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->textures = textures;
     this->material = material;
 
+    modelMatrix = glm::mat4(1);
+
     // Set default shader if no other shader is provided
     Shader* shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
     this->shader = shader;
@@ -37,6 +41,9 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Shad
 {
     this->vertices = vertices;
     this->indices = indices;
+
+    modelMatrix = glm::mat4(1);
+
     this->shader = shader;
 
     // Perform mesh setup
@@ -80,7 +87,7 @@ void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection)
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
