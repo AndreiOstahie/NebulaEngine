@@ -5,6 +5,7 @@
 #include "helpers.h"
 #include "gtx/string_cast.hpp"
 #include "transform.h"
+#include "mesh_loader.h"
 
 void TestLevel::Start()
 {
@@ -14,7 +15,7 @@ void TestLevel::Start()
 	std::cout << "TestLevel Start" << std::endl;
 
 	// Initializations...
-	camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+	camera = new Camera(glm::vec3(0.0f, 5.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), -75.0f, -15.0f);
 	displayGrid = true;
 
 	defaultShader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
@@ -33,6 +34,9 @@ void TestLevel::Start()
 	cube->modelMatrix = Transform::TranslateZ(cube->modelMatrix, -2.0f);
 	cube->modelMatrix = Transform::ScaleUniform(cube->modelMatrix, 2.5f);
 
+	MeshLoader loader;
+	suzanne = loader.LoadMesh("Resources/Meshes/SuzanneObj.obj", false);
+	suzanne.modelMatrix = Transform::TranslateX(suzanne.modelMatrix, 5.0f);
 }
 
 
@@ -46,7 +50,7 @@ void TestLevel::Update(float deltaTime)
 	// Level update logic...
 
 
-	
+	suzanne.DrawWithShader(suzanne.modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
     cube->DrawWithShader(cube->modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
 }
 

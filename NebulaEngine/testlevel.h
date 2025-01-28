@@ -8,6 +8,7 @@ class TestLevel : public Level {
 private:
     Mesh* cube = nullptr;
     Shader* defaultShader;
+    Mesh suzanne;
 
 public:
     void Start() override;

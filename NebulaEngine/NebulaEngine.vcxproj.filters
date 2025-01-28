@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{5b53f80e-26de-4aa9-b09e-423b97e2b6d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Meshes">
+      <UniqueIdentifier>{530271d7-9dd3-4f40-82ff-3f5736cc81a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NebulaEngine.cpp">
@@ -37,6 +40,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh_loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,6 +74,9 @@
     <ClInclude Include="transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mesh_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentShader.glsl">
@@ -81,6 +90,9 @@
     </None>
     <None Include="Shaders\VS_Grid.glsl">
       <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Meshes\Suzanne.fbx">
+      <Filter>Resource Files\Meshes</Filter>
     </None>
   </ItemGroup>
 </Project>
