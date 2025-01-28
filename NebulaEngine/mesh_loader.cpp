@@ -20,14 +20,17 @@ Mesh MeshLoader::LoadMesh(const std::string& filePath, bool isZUp)
 
     // Process the first mesh in the scene (you can extend this to handle multiple meshes)
     aiMesh* mesh = scene->mMeshes[0];
-    return ProcessMesh(mesh, isZUp);
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    return ProcessMesh(mesh, material, isZUp);
     
 }
 
-Mesh MeshLoader::ProcessMesh(aiMesh* mesh, bool isZUp)
+Mesh MeshLoader::ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+
+    Material material;
 
     // Extract vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -83,6 +86,21 @@ Mesh MeshLoader::ProcessMesh(aiMesh* mesh, bool isZUp)
         }
     }
 
+    // Extract material properties
+    aiColor3D color;
+    if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
+        material.diffuse = glm::vec3(color.r, color.g, color.b);
+    }
+    if (aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS) {
+        material.specular = glm::vec3(color.r, color.g, color.b);
+    }
+    float shininess;
+    if (aiMaterial->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
+        material.shininess = shininess;
+    }
+
+
+
     // Create and return the Mesh object
-    return Mesh(vertices, indices);
+    return Mesh(vertices, indices, material);
 }

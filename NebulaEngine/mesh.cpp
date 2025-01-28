@@ -37,6 +37,22 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     Setup();
 }
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material material)
+{
+    this->vertices = vertices;
+    this->indices = indices;
+    this->material = material;
+
+    modelMatrix = glm::mat4(1);
+
+    // Set default shader if no other shader is provided
+    Shader* shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+    this->shader = shader;
+
+    // Perform mesh setup
+    Setup();
+}
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Shader *shader)
 {
     this->vertices = vertices;
@@ -90,6 +106,42 @@ void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection)
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+void Mesh::DrawWithPhongShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 viewPos, const std::vector<PointLight>& pointLights)
+{
+    glUseProgram(shader->ID);
+
+    // Set the Model, View, and Projection matrices
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Model"), 1, GL_FALSE, glm::value_ptr(Model));
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "View"), 1, GL_FALSE, glm::value_ptr(View));
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
+
+    // Send the camera's view position to the shader
+    glUniform3fv(glGetUniformLocation(shader->ID, "viewPos"), 1, glm::value_ptr(viewPos));
+
+    // Set material properties (diffuse, specular, shininess)
+    glUniform3fv(glGetUniformLocation(shader->ID, "materialDiffuse"), 1, glm::value_ptr(material.diffuse));
+    glUniform3fv(glGetUniformLocation(shader->ID, "materialSpecular"), 1, glm::value_ptr(material.specular));
+    glUniform1f(glGetUniformLocation(shader->ID, "materialShininess"), material.shininess);
+
+    // Set point light properties
+    int numLights = std::min((int)pointLights.size(), MAX_LIGHTS);
+    glUniform1i(glGetUniformLocation(shader->ID, "numLights"), numLights);
+
+    for (int i = 0; i < numLights; i++) {
+        std::string lightBase = "pointLights[" + std::to_string(i) + "]";
+        glUniform3fv(glGetUniformLocation(shader->ID, (lightBase + ".position").c_str()), 1, glm::value_ptr(pointLights[i].position));
+        glUniform3fv(glGetUniformLocation(shader->ID, (lightBase + ".color").c_str()), 1, glm::value_ptr(pointLights[i].color));
+        glUniform1f(glGetUniformLocation(shader->ID, (lightBase + ".strength").c_str()), pointLights[i].strength);
+    }
+
+    // Render the mesh
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+
 
 void Mesh::Setup()
 {

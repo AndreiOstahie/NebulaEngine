@@ -37,6 +37,17 @@ void TestLevel::Start()
 	MeshLoader loader;
 	suzanne = loader.LoadMesh("Resources/Meshes/SuzanneObj.obj", false);
 	suzanne.modelMatrix = Transform::TranslateX(suzanne.modelMatrix, 5.0f);
+
+	phongShader = new Shader("Shaders/VS_Phong.glsl", "Shaders/FS_Phong.glsl");
+	suzanne.SetShader(phongShader);
+	suzanne.material.diffuse = glm::vec3(1.0f, 1.0f, 0.0f);
+	suzanne.material.specular = glm::vec3(1.0f, 1.0f, 0.0f);
+	suzanne.material.shininess = 30.0f;
+
+	pointLights = {
+	{{5.0f, 7.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, 1.0f}, // White light
+	//{{-5.0f, 5.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, 0.8f} // Red light
+	};
 }
 
 
@@ -49,8 +60,10 @@ void TestLevel::Update(float deltaTime)
 
 	// Level update logic...
 
+	suzanne.modelMatrix = Transform::RotateY(suzanne.modelMatrix, deltaTime * 30.0f);
+	suzanne.DrawWithPhongShader(suzanne.modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->position, pointLights);
 
-	suzanne.DrawWithShader(suzanne.modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+
     cube->DrawWithShader(cube->modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
 }
 

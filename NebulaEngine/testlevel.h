@@ -8,7 +8,10 @@ class TestLevel : public Level {
 private:
     Mesh* cube = nullptr;
     Shader* defaultShader;
+    Shader* phongShader;
     Mesh suzanne;
+
+    std::vector<PointLight> pointLights;
 
 public:
     void Start() override;

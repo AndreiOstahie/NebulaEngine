@@ -12,5 +12,5 @@ public:
 	Mesh LoadMesh(const std::string& path, bool isZUp);
 
 private:
-	Mesh ProcessMesh(aiMesh* mesh, bool isZUp);
+	Mesh ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp);
 };

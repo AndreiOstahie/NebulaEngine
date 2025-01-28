@@ -2,6 +2,7 @@
 #include <glm.hpp>
 #include <string>
 
+#define MAX_LIGHTS 10
 
 struct Vertex {
 	glm::vec3 position;
@@ -19,4 +20,12 @@ struct Material {
 	glm::vec3 diffuse;	// Diffuse color
 	glm::vec3 specular;	// Specular color
 	float shininess;	// Shininess factor for specular color
+};
+
+
+// Point light properties
+struct PointLight {
+	glm::vec3 position;  // Position of the light
+	glm::vec3 color;     // Color of the light
+	float strength; // Light intensity
 };
