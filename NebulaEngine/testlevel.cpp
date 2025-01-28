@@ -40,9 +40,13 @@ void TestLevel::Start()
 	displayGrid = true;
 
 	defaultShader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+	vertexColorShader = new Shader("Shaders/VS_VertexColor.glsl", "Shaders/FS_VertexColor.glsl");
 
 	cube = createCube();
 	cube->SetShader(defaultShader);
+
+	vertexColorsCube = createCube();
+	vertexColorsCube->SetShader(vertexColorShader);
 
 	/*cube->modelMatrix = Transform::RotateX(cube->modelMatrix, 30.0f);
 	cube->modelMatrix = Transform::ScaleX(cube->modelMatrix, 5.0f);
@@ -96,6 +100,8 @@ void TestLevel::Start()
 	suzanne2.material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	suzanne2.material.specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	suzanne2.material.shininess = 50.0f;
+
+
 }
 
 
@@ -130,10 +136,10 @@ void TestLevel::Update(float deltaTime)
 
 
 	// Update and draw moving point lights
-	float rotationSpeed = glm::radians(45.0f); // 45 degrees per second
+	float pointLightsRotationSpeed = glm::radians(45.0f); // 45 degrees per second
 	glm::vec3 center = glm::vec3(-7.0f, 3.0f, 0.0f); // Object's position
 
-	UpdatePointLights(movingPointLights, deltaTime, center, rotationSpeed);
+	UpdatePointLights(movingPointLights, deltaTime, center, pointLightsRotationSpeed);
 	
 	for (int i = 0; i < movingPointLights.size(); i++)
 	{
@@ -143,6 +149,70 @@ void TestLevel::Update(float deltaTime)
 		
 
 		pointLightMesh.DrawWithShader(model, camera->GetViewMatrix(), camera->GetProjectionMatrix(), movingPointLights[i].color);
+	}
+
+
+
+	// Translate cube
+	{
+		if (currentTranslation <= minTranslation) {
+			translatePositive = true;
+		}
+		else if (currentTranslation >= maxTranslation) {
+			translatePositive = false;
+		}
+
+		if (translatePositive) {
+			currentTranslation += deltaTime * translationSpeed;
+		}
+		else {
+			currentTranslation -= deltaTime * translationSpeed;
+		}
+
+		model = glm::mat4(1);
+		model = Transform::Translate(model, glm::vec3(-5.0f, 7.0f, 0.0f));
+		model = Transform::TranslateX(model, currentTranslation);
+		model = Transform::TranslateZ(model, currentTranslation);
+
+		vertexColorsCube->DrawWithShader(model, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+	}
+
+	// Scale cube
+	{
+		if (currentScale <= minScale) {
+			scaleUp = true;
+		}
+		else if (currentScale >= maxScale) {
+			scaleUp = false;
+		}
+
+		if (scaleUp) {
+			currentScale += deltaTime * scalingSpeed;
+		}
+		else {
+			currentScale -= deltaTime * scalingSpeed;
+		}
+
+		model = glm::mat4(1);
+		model = Transform::Translate(model, glm::vec3(0.0f, 7.0f, 0.0f));
+		model = Transform::ScaleUniform(model, currentScale);
+
+
+		vertexColorsCube->DrawWithShader(model, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+	}
+
+
+	// Rotate cube
+	{
+		currentRotation += deltaTime * rotationSpeed;
+
+		model = glm::mat4(1);
+		model = Transform::Translate(model, glm::vec3(5.0f, 7.0f, 0.0f));
+		model = Transform::RotateX(model, currentRotation);
+		model = Transform::RotateY(model, currentRotation);
+
+
+		vertexColorsCube->DrawWithShader(model, camera->GetViewMatrix(), camera->GetProjectionMatrix());
 	}
 }
 

@@ -41,6 +41,18 @@ Mesh* createCube() {
         0, 5, 4
     };
 
+    // Assign colors to vertices
+    {
+        vertices[0].color = glm::vec3(1.0f, 0.0f, 0.0f);
+        vertices[1].color = glm::vec3(0.0f, 1.0f, 0.0f);
+        vertices[2].color = glm::vec3(0.0f, 0.0f, 1.0f);
+        vertices[3].color = glm::vec3(1.0f, 1.0f, 0.0f);
+        vertices[4].color = glm::vec3(1.0f, 0.0f, 1.0f);
+        vertices[5].color = glm::vec3(0.0f, 1.0f, 1.0f);
+        vertices[6].color = glm::vec3(0.5f, 0.75f, 1.0f);
+        vertices[7].color = glm::vec3(1.0f, 0.5f, 0.25f);
+    }
+    
 
 
     //std::vector<Texture> textures = {};
