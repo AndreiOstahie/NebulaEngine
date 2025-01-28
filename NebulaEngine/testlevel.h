@@ -9,9 +9,20 @@ private:
     Mesh* cube = nullptr;
     Shader* defaultShader;
     Shader* phongShader;
-    Mesh suzanne;
+    Shader* baseColorShader;
+    Mesh suzanne, suzanne2;
 
-    std::vector<PointLight> pointLights;
+    std::vector<PointLight> controllablePointLight;
+    glm::vec3 controllablePointLightPosition;
+    glm::vec3 controllablePointLightColor;
+    float controllablePointLightSpeed = 3.5f;
+
+    std::vector<PointLight> movingPointLights;
+    std::vector<glm::mat4> movingPointLightsModelMatrices;
+    float movingPointLightsRotation = 0.0f;
+
+    Mesh pointLightMesh;
+    glm::vec3 pointLightMeshScale;
 
 public:
     void Start() override;

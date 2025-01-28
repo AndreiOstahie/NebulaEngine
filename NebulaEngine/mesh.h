@@ -26,7 +26,7 @@ public:
     
     
     void Draw();
-    void DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection);
+    void DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
     void DrawWithPhongShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 viewPos, const std::vector<PointLight>& pointLights);
 
     void Setup();

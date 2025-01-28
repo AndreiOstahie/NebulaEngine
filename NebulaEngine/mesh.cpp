@@ -91,7 +91,7 @@ void Mesh::Draw()
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection)
+void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 color)
 {
     // Render
     glUseProgram(shader->ID);
@@ -101,6 +101,8 @@ void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection)
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Model"), 1, GL_FALSE, glm::value_ptr(Model));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "View"), 1, GL_FALSE, glm::value_ptr(View));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
+
+    glUniform3fv(glGetUniformLocation(shader->ID, "color"), 1, glm::value_ptr(color));
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

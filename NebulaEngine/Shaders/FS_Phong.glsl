@@ -23,7 +23,7 @@ struct PointLight {
 
 
 // Uniforms for point lights
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 10
 uniform PointLight pointLights[MAX_LIGHTS]; // Array of point lights
 uniform int numLights; // Number of active lights
 

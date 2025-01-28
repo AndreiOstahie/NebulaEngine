@@ -162,9 +162,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentShader.glsl" />
+    <None Include="Shaders\FS_BaseColor.glsl" />
     <None Include="Shaders\FS_Grid.glsl" />
     <None Include="Shaders\FS_Phong.glsl" />
     <None Include="Shaders\VertexShader.glsl" />
+    <None Include="Shaders\VS_BaseColor.glsl" />
     <None Include="Shaders\VS_Grid.glsl" />
     <None Include="Shaders\VS_Phong.glsl" />
   </ItemGroup>

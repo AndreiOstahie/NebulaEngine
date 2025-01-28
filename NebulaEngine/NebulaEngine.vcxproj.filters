@@ -97,5 +97,11 @@
     <None Include="Shaders\VS_Phong.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\FS_BaseColor.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\VS_BaseColor.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
