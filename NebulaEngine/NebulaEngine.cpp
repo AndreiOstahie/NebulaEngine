@@ -1,5 +1,5 @@
-// NebulaEngine.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// NebulaEngine.cpp : Contains the 'main' function.
+
 
 #pragma once
 #include <iostream>
@@ -10,29 +10,16 @@
 #include "testlevel.h"
 #include "helpers.h"
 
-
-
 using namespace std;
 
-// Window size
-const GLint WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 
-
-
-
-
-
-
+// Application window size
+const GLint WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720;
 
 
 
 int main()
 {
-    std::cout << "Hello World!\n";
-
-    bool enableGrid = true;
-
-
     // Init GLFW and return error for failure
     if (!glfwInit())
     {
@@ -42,7 +29,7 @@ int main()
     }
 
     // Setup GLFW window properties
-    // Set OpenGL version (OpenGL 3.3)
+    // Set OpenGL version (3.3)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // disable backward compatibility
@@ -89,6 +76,8 @@ int main()
 
     // Create a level
     Level* level = new TestLevel();
+
+    // Call the level's Start function for initializations
     level->Start();
 
     // Engine frame time
@@ -99,22 +88,21 @@ int main()
     // Loop until window is closed
     while (!glfwWindowShouldClose(mainWindow))
     {
-        // Get frame deltaTime
+        // Calculate deltaTime
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // Handle user input events
+        // Process user input events
         glfwPollEvents();
 
         // Clear Window (color data and depth data)
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Handle user input
+        // Handle user input (logic is implemented in Level class or other classes that inherit the base Level class)
         level->HandleInput(mainWindow, deltaTime);
 
-         
         // Update the current level
         level->Update(deltaTime);
 
@@ -131,14 +119,3 @@ int main()
 
     return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

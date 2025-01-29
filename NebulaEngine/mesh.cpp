@@ -10,6 +10,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
     this->vertices = vertices;
     this->indices = indices;
 
+    // Identity model matrix
     modelMatrix = glm::mat4(1);
 
     // Set default shader if no other shader is provided
@@ -27,6 +28,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->textures = textures;
     this->material = material;
 
+    // Identity model matrix
     modelMatrix = glm::mat4(1);
 
     // Set default shader if no other shader is provided
@@ -43,6 +45,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Mate
     this->indices = indices;
     this->material = material;
 
+    // Identity model matrix
     modelMatrix = glm::mat4(1);
 
     // Set default shader if no other shader is provided
@@ -57,53 +60,32 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Shad
 {
     this->vertices = vertices;
     this->indices = indices;
+    this->shader = shader;
 
+    // Identity model matrix
     modelMatrix = glm::mat4(1);
 
-    this->shader = shader;
 
     // Perform mesh setup
     Setup();
 }
 
-void Mesh::Draw()
-{
-    // std::cout << "Drawing mesh..." << std::endl;
-
-    // Bind textures
-    for (unsigned int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i); // Activate texture unit
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-
-    // Draw mesh
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    // Unbind textures
-    for (unsigned int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    // Reset to default texture unit
-    glActiveTexture(GL_TEXTURE0);
-}
 
 void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 color)
 {
-    // Render
+    // Use the mesh's defined shader
     glUseProgram(shader->ID);
 
 
-    // Set uniforms
+    // Set MVP matrices uniforms
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Model"), 1, GL_FALSE, glm::value_ptr(Model));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "View"), 1, GL_FALSE, glm::value_ptr(View));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
 
+    // Set mesh color uniform
     glUniform3fv(glGetUniformLocation(shader->ID, "color"), 1, glm::value_ptr(color));
 
+    // Render the mesh
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -111,14 +93,15 @@ void Mesh::DrawWithShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection,
 
 void Mesh::DrawWithPhongShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projection, glm::vec3 viewPos, const std::vector<PointLight>& pointLights)
 {
+    // Use the mesh's defined shader
     glUseProgram(shader->ID);
 
-    // Set the Model, View, and Projection matrices
+    // Set MVP matrices uniforms
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Model"), 1, GL_FALSE, glm::value_ptr(Model));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "View"), 1, GL_FALSE, glm::value_ptr(View));
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "Projection"), 1, GL_FALSE, glm::value_ptr(Projection));
 
-    // Send the camera's view position to the shader
+    // Send the camera's view position as a uniform value (used for fragment lighting calculations)
     glUniform3fv(glGetUniformLocation(shader->ID, "viewPos"), 1, glm::value_ptr(viewPos));
 
     // Set material properties (diffuse, specular, shininess)
@@ -147,21 +130,21 @@ void Mesh::DrawWithPhongShader(glm::mat4 Model, glm::mat4 View, glm::mat4 Projec
 
 void Mesh::Setup()
 {
-    std::cout << "Setup mesh..." << std::endl;
-
     // Create buffers/arrays
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &IBO);
 
+    // Bind VAO
     glBindVertexArray(VAO);
 
-    // Load data into vertex buffers
+    // Load data into vertex and index buffers
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
 
     // Set the vertex attribute pointers
     // Position (location = 0)
@@ -182,6 +165,7 @@ void Mesh::Setup()
 
     glBindVertexArray(0);
 }
+
 
 void Mesh::SetShader(Shader* shader)
 {

@@ -1,9 +1,10 @@
 #pragma once
 
+// Wrapper class over glm 3D math functions
 
 class Transform {
 public:
-	// Translate
+	// Translate functions (receive a model matrix and a translation value for all axes or only one axis)
 	static glm::mat4 Translate(glm::mat4 model, glm::vec3 translation) {
 		return glm::translate(model, translation);
 	}
@@ -21,7 +22,7 @@ public:
 	}
 
 
-	// Scale
+	// Scale functions (receive a model matrix and a scale value for all axes or only one axis)
 	static glm::mat4 Scale(glm::mat4 model, glm::vec3 scaleFactor) {
 		return glm::scale(model, scaleFactor);
 	}
@@ -43,7 +44,7 @@ public:
 	}
 
 
-	// Rotate
+	// Rotate functions (receive a model matrix and a rotation value for all axes or only one axis)
 	static glm::mat4 Rotate(glm::mat4 model, glm::vec3 axis, float angle) {
 		return glm::rotate(model, glm::radians(angle), axis);
 	}

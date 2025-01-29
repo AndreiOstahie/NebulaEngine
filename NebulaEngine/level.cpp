@@ -1,13 +1,19 @@
 #include "level.h"
 #include "helpers.h"
 
+
+
 Level::Level()
 {
+    // Create default camera
     camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+
+    // Create shader for rendering the grid
     gridShader = new Shader("Shaders/VS_Grid.glsl", "Shaders/FS_Grid.glsl");
 }
 
 Level::~Level() = default;
+
 
 // Called once when the level/scene is initialized
 void Level::Start() {
@@ -16,22 +22,23 @@ void Level::Start() {
     
 }
 
+
 // Called once every frame to update level/scene logic
 void Level::Update(float deltaTime) {
     // std::cout << "Level Update" << std::endl;
 
     if (displayGrid) {
-        // Set the shader and view for the grid
+        // Render the grid
         gridShader->use();
 
-        glm::mat4 model = glm::mat4(1.0f); // No transformation for the grid
+        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera->GetViewMatrix();
         glm::mat4 projection = camera->GetProjectionMatrix();
 
         gridShader->setMat4("Model", model);
         gridShader->setMat4("View", view);
         gridShader->setMat4("Projection", projection);
-        DrawGrid(50.0f, 1.0f, gridShader);  // Grid size of 50, step size of 1.0f
+        DrawGrid(50.0f, 1.0f, gridShader);  // Grid size = 50, step size = 1
     }
 }
 
@@ -43,17 +50,16 @@ void Level::HandleInput(GLFWwindow* window, float deltaTime) {
     // Check if right mouse button is held down
     bool rightMousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 
-
     // Lock / unlock cursor
     if (rightMousePressed) {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Lock cursor
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
     else {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); // Unlock cursor
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
 
-    // Camera movement
+    // Process camera movement
     if (rightMousePressed)
     {
         // W - Forward
@@ -82,7 +88,7 @@ void Level::HandleInput(GLFWwindow* window, float deltaTime) {
     }
 
 
-    // Camera rotation
+    // Process camera rotation
     static double lastX = 0.0f, lastY = 0.0f;
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);

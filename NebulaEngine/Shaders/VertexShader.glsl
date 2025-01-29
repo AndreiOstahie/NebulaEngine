@@ -11,7 +11,6 @@ uniform mat4 View;
 uniform mat4 Projection;
 
 void main() {
-    // gl_Position = Projection * View * Model * vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
+    // Calculate final vertex position by using the MVP matrices
     gl_Position = Projection * View * Model * vec4(Position, 1.0f);
 }

@@ -1,16 +1,18 @@
 #include "mesh_loader.h"
 
+
+
 Mesh MeshLoader::LoadMesh(const std::string& filePath, bool isZUp)
 {
     Assimp::Importer importer;
 
-    // Import the file with Assimp
-    const aiScene* scene = importer.ReadFile(filePath,
-        aiProcess_Triangulate |          // Ensure all faces are triangles
-        aiProcess_JoinIdenticalVertices | // Remove duplicate vertices
-        aiProcess_GenSmoothNormals |     // Generate smooth normals
-        aiProcess_FlipUVs |              // Flip UVs if needed
-        aiProcess_ImproveCacheLocality); // Optimize for GPU cache
+    // Import the file with assimp
+    const aiScene* scene = importer.ReadFile(filePath,  // path to mesh file
+        aiProcess_Triangulate |                         // Ensure all faces are triangles
+        aiProcess_JoinIdenticalVertices |               // Remove duplicate vertices
+        aiProcess_GenSmoothNormals |                    // Generate smooth normals
+        aiProcess_FlipUVs |                             // Flip UVs if needed
+        aiProcess_ImproveCacheLocality);                // Optimize for GPU cache
 
     // Check if the file was successfully loaded
     if (!scene || !scene->mRootNode || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
@@ -18,19 +20,22 @@ Mesh MeshLoader::LoadMesh(const std::string& filePath, bool isZUp)
         return Mesh(); // Return an empty Mesh on failure
     }
 
-    // Process the first mesh in the scene (you can extend this to handle multiple meshes)
+    // Get the first mesh in the scene and its material
+    // Currently, a single mesh can be loaded from a given file
     aiMesh* mesh = scene->mMeshes[0];
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+    // Process the imported mesh
     return ProcessMesh(mesh, material, isZUp);
-    
 }
 
 Mesh MeshLoader::ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp)
 {
+    // Variables to store the imported mesh's geometry and material data
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-
     Material material;
+
 
     // Extract vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -43,7 +48,7 @@ Mesh MeshLoader::ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp)
             mesh->mVertices[i].z
         );
 
-        // Adjust vertex positions for file formats that use Z-up (e.g. Blender fbx)
+        // Adjust vertex positions for file formats that use Z-up
         if (isZUp) {
             vertex.position = glm::vec3(vertex.position.x, vertex.position.z, -vertex.position.y);
         }
@@ -57,7 +62,7 @@ Mesh MeshLoader::ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp)
             );
         }
 
-        // Adjust vertex normals for file formats that use Z-up (e.g. Blender fbx)
+        // Adjust vertex normals for file formats that use Z-up
         if (isZUp) {
             vertex.normal = glm::vec3(vertex.normal.x, vertex.normal.z, -vertex.normal.y);
         }
@@ -98,7 +103,6 @@ Mesh MeshLoader::ProcessMesh(aiMesh* mesh, aiMaterial* aiMaterial, bool isZUp)
     if (aiMaterial->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
         material.shininess = shininess;
     }
-
 
 
     // Create and return the Mesh object

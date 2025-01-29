@@ -8,9 +8,9 @@
 class Level {
 public:
     // Variables
-    Camera* camera;
-    bool displayGrid = true;
-    Shader* gridShader;
+    Camera* camera;     // default scene camera
+    bool displayGrid = true;    // toggle scene grid on/off
+    Shader* gridShader;     // shader used for rendering the grid
 
 
     // Methods
@@ -29,5 +29,4 @@ public:
     // Handle mouse input
     virtual void HandleMouseInput(GLFWwindow* window, double xpos, double ypos);
 
-    
 };

@@ -3,10 +3,13 @@
 #include <string>
 #include "libs.h"
 
+
+
 class Shader {
 public:
     unsigned int ID;
 
+    // Constructor that receives the file paths for vertex and fragment shaders
     Shader(const char* vertexPath, const char* fragmentPath);
 
     // Use the shader program
@@ -20,5 +23,6 @@ public:
     void setMat4(const std::string& name, const glm::mat4& value) const;
 
 private:
+    // Function that checks for any errors occuring during shader compilation
     void checkCompileErrors(unsigned int shader, std::string type);
 };

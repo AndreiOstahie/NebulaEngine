@@ -8,16 +8,18 @@ in vec3 NormalDir;
 
 
 // Uniforms for material properties
-uniform vec3 materialDiffuse;  // Material diffuse color
-uniform vec3 materialSpecular; // Material specular color
-uniform float materialShininess; // Material shininess factor
+uniform vec3 materialDiffuse;  // Diffuse color
+uniform vec3 materialSpecular; // Specular color
+uniform float materialShininess; // Shininess factor
 
-uniform vec3 viewPos;
+
+uniform vec3 viewPos;  // Camera/eye position
+
 
 // Point light properties
 struct PointLight {
-    vec3 position;  // Position of the light
-    vec3 color;     // Color of the light
+    vec3 position;  // Light position
+    vec3 color;     // Light color
     float strength; // Light intensity
 };
 
@@ -29,7 +31,7 @@ uniform int numLights; // Number of active lights
 
 
 
-
+// Compute the ambient light component
 vec3 ComputeAmbientComponent()
 {
     vec3 global_ambient_color = vec3(0.25f);
@@ -39,57 +41,60 @@ vec3 ComputeAmbientComponent()
 }
 
 
+// Compute the light attenuation factor based on the distance
+// between the position of the light source and the position of the illuminated point
 float ComputeDistanceAttenuation(vec3 light_position, vec3 point_position)
 {
-    // Compute the light attenuation factor based on the distance
-    // between the position of the illuminated point and the position of the light source.
+    // Get distance between the light source and the point
     float d = distance(light_position, point_position);
 
-    // return 1 / (pow(d, 2) + 1);
-
+    
+    // Compute attenuation based on distance and falloff constants
     float falloffConstant_1 = 0.5f;
-    float falloffConstant_2 = 0.f;
+    float falloffConstant_2 = 0.1f;
     float attenuation = 1.0 / (1.0 + falloffConstant_1 * d + falloffConstant_2 * d * d);
     
     return attenuation;
+
+    // return 1 / (pow(d, 2) + 1);
 }
 
 
+// Compute Phong illumination (diffuse, specular)
 vec3 ComputePhongIllumination(vec3 light_position)
 {
-    // Compute the diffuse component of the Lambert illumination model
-    vec3 L = normalize(light_position - FragPos);
+    // Compute the diffuse component
+    vec3 L = normalize(light_position - FragPos);  // vector between fragment and light source
     vec3 diffuse_component =  materialDiffuse * max(dot(normalize(NormalDir), L), 0);
 
-    // Compute the specular component of the Phong illumination model
+    
+    // Check if fragment receives light
     int receivesLight = 0;
     if (dot(NormalDir, L) > 0)
     {
         receivesLight = 1;
     }
-    vec3 R = reflect (-L, normalize(NormalDir));
 
+    vec3 R = reflect (-L, normalize(NormalDir));  // light reflection vector
+    vec3 viewDir = normalize(viewPos - FragPos);  // vector between fragment and camera
+
+    // Compute the specular component
     vec3 specular_component = vec3(0);
-
-    // if (length(diffuse_component) > 0)
-    // {
-      // receivesLight = 1;
-    // }
-
-    vec3 viewDir = normalize(viewPos - FragPos);
     specular_component = materialSpecular * receivesLight * pow(max(dot(viewDir, R), 0), materialShininess);
 
-    // Compute the final illumination as the sum of the diffuse and specular components
+    // Compute the final illumination (diffuse + specular)
     vec3 illumination = diffuse_component + specular_component;
 
     return illumination;
 }
 
 
+// Compute lighting from the point light sources
 vec3 ComputePointLightSourcesIllumination()
 {
     vec3 lights_illumination = vec3(0);
 
+    // Compute Phong illumination and light attenuation for each light source
     for (int i=0;i<numLights;i++) {
         vec3 light_position = pointLights[i].position;
         vec3 light_color = pointLights[i].color;
@@ -97,9 +102,7 @@ vec3 ComputePointLightSourcesIllumination()
         vec3 light_illumination = ComputePhongIllumination(light_position);
         float illumination_attenuation = ComputeDistanceAttenuation(light_position, FragPos);
 
-        // Add to the illumination of all light sources the result
-        // of multiplying the illumination of the light source from the current iteration
-        // with the attenuation of the illumination and the color of the illumination.
+        // Add the illumination from the current light source to the result
         lights_illumination += vec3(pointLights[i].strength) * light_illumination * illumination_attenuation * light_color;
     }
 
@@ -110,86 +113,8 @@ vec3 ComputePointLightSourcesIllumination()
 
 void main()
 {
-    vec3 illumination = ComputePointLightSourcesIllumination()
-        + ComputeAmbientComponent();
+    // Add the light components to get the final color value
+    vec3 illumination = ComputePointLightSourcesIllumination() + ComputeAmbientComponent();
 
     FragColor = vec4 (illumination, 1);
 }
-
-
-
-
-
-
-
-
-
-
-/*
-out vec4 FragColor;
-
-// Input from vertex shader
-in vec3 FragPos;
-in vec3 NormalDir;
-
-// Uniforms for material properties
-uniform vec3 materialDiffuse;  // Material diffuse color
-uniform vec3 materialSpecular; // Material specular color
-uniform float materialShininess; // Material shininess factor
-
-
-// Point light properties
-struct PointLight {
-    vec3 position;  // Position of the light
-    vec3 color;     // Color of the light
-    float strength; // Light intensity
-};
-
-
-// Uniforms for point lights
-#define MAX_LIGHTS 8
-uniform PointLight pointLights[MAX_LIGHTS]; // Array of point lights
-uniform int numLights; // Number of active lights
-
-
-// Function to calculate lighting for a single point light
-vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos)
-{
-    // Calculate light direction
-    vec3 lightDir = normalize(light.position - fragPos);
-
-    // Diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * light.color * materialDiffuse;
-
-    // Specular shading
-    vec3 viewDir = normalize(-fragPos); // Assume the camera is at the origin
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-    vec3 specular = spec * light.color * materialSpecular;
-
-    // Combine and scale by light strength
-    return (diffuse + specular) * light.strength;
-}
-
-
-void main()
-{
-    // Normalize the normal direction
-    vec3 normal = normalize(NormalDir);
-
-    // Sum contributions from all active lights
-    vec3 result = vec3(0.0);
-    for (int i = 0; i < numLights; i++) {
-        result += CalculatePointLight(pointLights[i], normal, FragPos);
-    }
-
-    // Output the final color
-    FragColor = vec4(result, 1.0);
-
-
-
-
-    //FragColor = vec4(materialDiffuse, 1.0);
-}
-*/

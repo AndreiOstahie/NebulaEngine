@@ -4,6 +4,7 @@
 #include <sstream>
 
 
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // Load and compile shaders
     std::string vertexCode, fragmentCode;
@@ -49,20 +50,23 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
 
-    // Shader program
+    // Create and link shader program
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
 
-    // Delete the shaders as they’re linked into our program now and no longer necessary
-   
+    // Delete the shaders once they're linked into the shader program
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
 }
+
 
 void Shader::use() {
     glUseProgram(ID);
 }
+
 
 // Utility functions for setting uniforms
 void Shader::setBool(const std::string& name, bool value) const {
@@ -84,6 +88,8 @@ void Shader::setVec3(const std::string& name, const glm::vec3& value) const {
 void Shader::setMat4(const std::string& name, const glm::mat4& value) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
+
+
 
 // Check for compilation/linking errors
 void Shader::checkCompileErrors(unsigned int shader, std::string type) {

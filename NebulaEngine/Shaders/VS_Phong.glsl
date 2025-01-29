@@ -16,8 +16,9 @@ out vec3 NormalDir; // Normal in world space
 
 void main()
 {
-    FragPos = vec3(Model * vec4(Position, 1.0)); // Transform vertex position to world space
-    NormalDir = mat3(transpose(inverse(Model))) * Normal; // Transform normal to world space
-    // NormalDir = normalize( mat3(Model) * Normal );
-    gl_Position = Projection * View * vec4(FragPos, 1.0); // Transform to clip space
+    FragPos = vec3(Model * vec4(Position, 1.0));  // Transform vertex position to world space
+    NormalDir = mat3(transpose(inverse(Model))) * Normal;  // Transform normal to world space
+    // NormalDir = normalize( mat3(Model) * Normal);  // Transform normal to world space
+
+    gl_Position = Projection * View * vec4(FragPos, 1.0);
 }
