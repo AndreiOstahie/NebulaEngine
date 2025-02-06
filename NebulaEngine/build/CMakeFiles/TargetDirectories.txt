@@ -1,0 +1,3 @@
+D:/Facultate/An_2/CMake/MG3D/NebulaEngine/build/CMakeFiles/NebulaEngine.dir
+D:/Facultate/An_2/CMake/MG3D/NebulaEngine/build/CMakeFiles/ALL_BUILD.dir
+D:/Facultate/An_2/CMake/MG3D/NebulaEngine/build/CMakeFiles/ZERO_CHECK.dir
